@@ -169,7 +169,7 @@ docs/
 
 ## 👥 Autores
 
-Desenvolvido por estudantes do 4º período de Ciência da Computação - UFAM
+Desenvolvido por estudantes do 4º período de Engenharia de Software - UFAM
 
 ---
 
