@@ -1,30 +1,60 @@
-from model import Product, CategoriaEnum
+from fastapi import FastAPI, HTTPException
+from model import Product
 from avl_catalog_product import ProductCatalogAVL
 
+app = FastAPI(title="Catálogo de Produtos com AVL")
 
-def main():
-    catalogo = ProductCatalogAVL()
+catalogo = ProductCatalogAVL()
 
-    p1 = Product(codigo=101, nome="Notebook Lenovo", preco=3500.0, quantidade=10, categoria=[CategoriaEnum.ELETRONICOS])
-    p2 = Product(codigo=102, nome="Camisa Polo", preco=120.0, quantidade=25, categoria=[CategoriaEnum.ROUPAS])
-    p3 = Product(codigo=103, nome="Bicicleta Aro 29", preco=1800.0, quantidade=5, categoria=[CategoriaEnum.ESPORTES])
-
-    catalogo.adicionar_produto(p1)
-    catalogo.adicionar_produto(p2)
-    catalogo.adicionar_produto(p3)
-
-    print("\nListando produtos em ordem:")
-    catalogo.listar_produtos()
-
-    print("\nBuscando produto com código 102:")
-    catalogo.buscar_produto(102)
-
-    print("\nRemovendo produto com código 101:")
-    catalogo.remover_produto(101)
-
-    print("\nListando após remoção:")
-    catalogo.listar_produtos()
+@app.get("/")
+def home():
+    return {"mensagem": "API do Catálogo AVL está online 🚀"}
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/products")
+def listar_produtos():
+    produtos = catalogo.listar_produtos()
+    return {"produtos": produtos}
+
+
+@app.post("/products")
+def adicionar_produto(produto: Product):
+    catalogo.adicionar_produto(produto)
+    return {"mensagem": "Produto adicionado com sucesso.", "produto": produto}
+
+
+@app.get("/products/{codigo}")
+def buscar_produto(codigo: int):
+    produto = catalogo.buscar_produto(codigo)
+    if not produto:
+        raise HTTPException(status_code=404, detail="Produto não encontrado.")
+    return {"produto": produto}
+
+
+@app.delete("/products/{codigo}")
+def remover_produto(codigo: int):
+    catalogo.remover_produto(codigo)
+    return {"mensagem": f"Produto {codigo} removido com sucesso."}
+
+
+@app.put("/products/{codigo}")
+def atualizar_produto(codigo: int, novo_produto: Product):
+    catalogo.remover_produto(codigo)
+    catalogo.adicionar_produto(novo_produto)
+    return {"mensagem": "Produto atualizado.", "produto": novo_produto}
+
+
+@app.get("/tree/avl")
+def exibir_arvore():
+    return {"mermaid": catalogo.avl.to_mermaid()}
+
+
+@app.get("/stats")
+def estatisticas():
+    avl = catalogo.avl
+    altura = avl.get_height(avl.root)
+    total = catalogo.contar_produtos()
+    return {
+        "altura": altura,
+        "total_produtos": total,
+    }

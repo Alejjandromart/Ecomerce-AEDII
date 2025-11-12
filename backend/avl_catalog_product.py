@@ -24,5 +24,21 @@ class ProductCatalogAVL:
             return None
 
     def listar_produtos(self):
-        print("Produtos em ordem (AVL):")
-        self.avl.in_order_traversal(self.avl.root)
+        produtos = []
+        def em_ordem(node):
+            if node:
+                em_ordem(node.left)
+                produtos.append({
+                    "codigo": node.key,
+                    "nome": node.value.nome,
+                    "preco": node.value.preco,
+                    "categoria": [c.value for c in node.value.categoria],
+                    "quantidade": node.value.quantidade
+                })
+                em_ordem(node.right)
+        em_ordem(self.avl.root)
+        return produtos
+
+    def to_mermaid(self):
+        return self.generate_mermaid()
+
