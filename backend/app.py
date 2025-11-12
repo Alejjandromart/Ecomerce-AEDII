@@ -1,58 +1,51 @@
 from fastapi import FastAPI, HTTPException
-from model import Product
-from avl_catalog_product import ProductCatalogAVL
+from modelo import Produto
+from catalogo_produtos_avl import CatalogoProdutosAVL
 
 app = FastAPI(title="Catálogo de Produtos com AVL")
 
-catalogo = ProductCatalogAVL()
+catalogo = CatalogoProdutosAVL()
 
 @app.get("/")
-def home():
+def inicio():
     return {"mensagem": "API do Catálogo AVL está online 🚀"}
 
-
-@app.get("/products")
+@app.get("/produtos")
 def listar_produtos():
     produtos = catalogo.listar_produtos()
     return {"produtos": produtos}
 
-
-@app.post("/products")
-def adicionar_produto(produto: Product):
+@app.post("/produtos")
+def adicionar_produto(produto: Produto):
     catalogo.adicionar_produto(produto)
     return {"mensagem": "Produto adicionado com sucesso.", "produto": produto}
 
-
-@app.get("/products/{codigo}")
+@app.get("/produtos/{codigo}")
 def buscar_produto(codigo: int):
     produto = catalogo.buscar_produto(codigo)
     if not produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado.")
     return {"produto": produto}
 
-
-@app.delete("/products/{codigo}")
+@app.delete("/produtos/{codigo}")
 def remover_produto(codigo: int):
     catalogo.remover_produto(codigo)
     return {"mensagem": f"Produto {codigo} removido com sucesso."}
 
-
-@app.put("/products/{codigo}")
-def atualizar_produto(codigo: int, novo_produto: Product):
+@app.put("/produtos/{codigo}")
+def atualizar_produto(codigo: int, novo_produto: Produto):
     catalogo.remover_produto(codigo)
     catalogo.adicionar_produto(novo_produto)
     return {"mensagem": "Produto atualizado.", "produto": novo_produto}
 
-
-@app.get("/tree/avl")
+@app.get("/arvore/avl")
 def exibir_arvore():
-    return {"mermaid": catalogo.avl.to_mermaid()}
+    return {"mermaid": catalogo.para_mermaid()}
 
-
-@app.get("/stats")
+@app.get("/estatisticas")
 def estatisticas():
     avl = catalogo.avl
-    altura = avl.get_height(avl.root)
+    altura = avl.obter_altura(avl.raiz)
     total = catalogo.contar_produtos()
     return {
         "altura": altura,

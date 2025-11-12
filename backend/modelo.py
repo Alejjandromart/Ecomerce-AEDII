@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from typing import List
 from enum import Enum
 
-
 class CategoriaEnum(str, Enum):
     ELETRONICOS = "Eletrônicos"
     ROUPAS = "Roupas"
@@ -14,8 +13,7 @@ class CategoriaEnum(str, Enum):
     ESPORTES = "Esportes"
     OUTROS = "Outros"
 
-
-class Product(BaseModel):
+class Produto(BaseModel):
     codigo: int = Field(..., description="Código único do produto")
     nome: str = Field(..., description="Nome do produto")
     preco: float = Field(..., gt=0, description="Preço do produto")
