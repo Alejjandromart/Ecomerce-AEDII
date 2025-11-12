@@ -1,38 +1,29 @@
-from node import Node
-from avl_tree import AVLTree
+from model import Product, CategoriaEnum
+from avl_catalog_product import ProductCatalogAVL
+
 
 def main():
-    
-    arvore = AVLTree()
+    catalogo = ProductCatalogAVL()
 
-    
-    valores = [30, 20, 40, 10, 25, 35, 50]
-    print("Inserindo elementos na AVL:")
-    for v in valores:
-        arvore.insert_key(v)
-        print(f"Inserido {v}")
-    
-    
-    print("\nÁrvore AVL em ordem:")
-    arvore.in_order_traversal()
-    
-    
-    chave = 25
-    encontrado = arvore.search(arvore.root, chave)
-    if encontrado:
-        print(f"\nChave {chave} encontrada na árvore.")
-    else:
-        print(f"\nChave {chave} não encontrada.")
-    
-    
-    remover = 20
-    print(f"\nRemovendo {remover} da árvore:")
-    arvore.remove_key(remover)
-    arvore.in_order_traversal()
-    
-    
-    print("\nRepresentação Mermaid do grafo AVL:")
-    print(arvore.generate_mermaid())
+    p1 = Product(codigo=101, nome="Notebook Lenovo", preco=3500.0, quantidade=10, categoria=[CategoriaEnum.ELETRONICOS])
+    p2 = Product(codigo=102, nome="Camisa Polo", preco=120.0, quantidade=25, categoria=[CategoriaEnum.ROUPAS])
+    p3 = Product(codigo=103, nome="Bicicleta Aro 29", preco=1800.0, quantidade=5, categoria=[CategoriaEnum.ESPORTES])
+
+    catalogo.adicionar_produto(p1)
+    catalogo.adicionar_produto(p2)
+    catalogo.adicionar_produto(p3)
+
+    print("\nListando produtos em ordem:")
+    catalogo.listar_produtos()
+
+    print("\nBuscando produto com código 102:")
+    catalogo.buscar_produto(102)
+
+    print("\nRemovendo produto com código 101:")
+    catalogo.remover_produto(101)
+
+    print("\nListando após remoção:")
+    catalogo.listar_produtos()
 
 
 if __name__ == "__main__":
