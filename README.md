@@ -31,6 +31,8 @@ Sistema web interativo que combina um e-commerce com conceitos acadêmicos de es
 
 ## 📦 Instalação
 
+### Frontend (React + Vite)
+
 ```bash
 # Clone o repositório
 git clone https://github.com/Alejjandromart/Ecomerce-AEDII.git
@@ -39,13 +41,38 @@ git clone https://github.com/Alejjandromart/Ecomerce-AEDII.git
 cd Ecomerce-AEDII
 
 # Instale as dependências
-npm install
+npm install --legacy-peer-deps
 
 # Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
 Acesse: `http://localhost:5173`
+
+### Backend (Python + FastAPI) - Opcional
+
+O sistema funciona offline por padrão. Para usar a árvore AVL real do backend:
+
+```bash
+# Instale as dependências Python
+cd backend
+pip install -r requirements.txt
+
+# Inicie o servidor FastAPI
+uvicorn app:app --reload
+
+# OU use o script PowerShell
+.\start-backend.ps1
+```
+
+Backend disponível em: `http://localhost:8000`  
+Documentação da API: `http://localhost:8000/docs`
+
+**Configurar modo online:**
+Edite o arquivo `.env` e mude:
+```env
+VITE_MODE=online
+```
 
 ---
 

@@ -1,20 +1,61 @@
+"""
+Módulo de Implementação de Árvore AVL
+Estrutura de dados auto-balanceada para catálogo de produtos
+"""
+
 from no import No
 
 class ArvoreAVL:
+    """
+    Árvore AVL (Adelson-Velsky e Landis)
+    Árvore binária de busca auto-balanceada
+    Garante operações O(log n) através de rotações
+    """
+    
     def __init__(self):
+        """Inicializa uma árvore AVL vazia"""
         self.raiz = None
 
     def obter_altura(self, no):
+        """
+        Obtém a altura de um nó
+        
+        Args:
+            no (No | None): Nó para obter altura
+            
+        Returns:
+            int: Altura do nó (0 se None)
+        """
         if not no:
             return 0
         return no.altura
 
     def obter_balanceamento(self, no):
+        """
+        Calcula o fator de balanceamento de um nó
+        Balanceamento = altura(esquerda) - altura(direita)
+        
+        Args:
+            no (No | None): Nó para calcular balanceamento
+            
+        Returns:
+            int: Fator de balanceamento (-2 a +2 em árvore válida)
+        """
         if not no:
             return 0
         return self.obter_altura(no.esquerda) - self.obter_altura(no.direita)
 
     def rotacionar_direita(self, y):
+        """
+        Rotação simples à direita
+        Usada quando subárvore esquerda está desbalanceada
+        
+        Args:
+            y (No): Nó raiz da subárvore a ser rotacionada
+            
+        Returns:
+            No: Nova raiz após rotação
+        """
         x = y.esquerda
         T2 = x.direita
 
@@ -27,6 +68,16 @@ class ArvoreAVL:
         return x
     
     def rotacionar_esquerda(self, x):
+        """
+        Rotação simples à esquerda
+        Usada quando subárvore direita está desbalanceada
+        
+        Args:
+            x (No): Nó raiz da subárvore a ser rotacionada
+            
+        Returns:
+            No: Nova raiz após rotação
+        """
         y = x.direita
         T2 = y.esquerda
 
@@ -39,6 +90,17 @@ class ArvoreAVL:
         return y
 
     def inserir(self, no, chave, valor=None):
+        """
+        Insere um nó recursivamente mantendo balanceamento AVL
+        
+        Args:
+            no (No | None): Nó raiz da subárvore
+            chave (int): Chave de ordenação (código do produto)
+            valor: Objeto produto associado à chave
+            
+        Returns:
+            No: Nova raiz da subárvore após inserção e balanceamento
+        """
         if not no:
             return No(chave, valor)
         elif chave < no.chave:
@@ -49,13 +111,17 @@ class ArvoreAVL:
         no.altura = 1 + max(self.obter_altura(no.esquerda), self.obter_altura(no.direita))
         balanceamento = self.obter_balanceamento(no)
 
+        # Caso Esquerda-Esquerda
         if balanceamento > 1 and chave < no.esquerda.chave:
             return self.rotacionar_direita(no)
+        # Caso Direita-Direita
         if balanceamento < -1 and chave > no.direita.chave:
             return self.rotacionar_esquerda(no)
+        # Caso Esquerda-Direita
         if balanceamento > 1 and chave > no.esquerda.chave:
             no.esquerda = self.rotacionar_esquerda(no.esquerda)
             return self.rotacionar_direita(no)
+        # Caso Direita-Esquerda
         if balanceamento < -1 and chave < no.direita.chave:
             no.direita = self.rotacionar_direita(no.direita)
             return self.rotacionar_esquerda(no)
@@ -63,9 +129,26 @@ class ArvoreAVL:
         return no
 
     def inserir_chave(self, chave, valor=None):
+        """
+        Método público para inserir na árvore
+        
+        Args:
+            chave (int): Chave a ser inserida
+            valor: Valor associado à chave
+        """
         self.raiz = self.inserir(self.raiz, chave, valor)
 
     def remover(self, no, chave):
+        """
+        Remove um nó recursivamente mantendo balanceamento AVL
+        
+        Args:
+            no (No | None): Nó raiz da subárvore
+            chave (int): Chave do nó a ser removido
+            
+        Returns:
+            No | None: Nova raiz da subárvore após remoção e balanceamento
+        """
         if not no:
             return no
 
@@ -74,6 +157,7 @@ class ArvoreAVL:
         elif chave > no.chave:
             no.direita = self.remover(no.direita, chave)
         else:
+            # Nó com um filho ou sem filhos
             if not no.esquerda:
                 temp = no.direita
                 no = None
@@ -83,6 +167,7 @@ class ArvoreAVL:
                 no = None
                 return temp
 
+            # Nó com dois filhos: substitui pelo sucessor in-ordem
             temp = self.obter_no_minimo(no.direita)
             no.chave = temp.chave
             no.valor = temp.valor
@@ -91,16 +176,21 @@ class ArvoreAVL:
         if not no:
             return no
 
+        # Atualiza altura e rebalanceia
         no.altura = 1 + max(self.obter_altura(no.esquerda), self.obter_altura(no.direita))
         balanceamento = self.obter_balanceamento(no)
 
+        # Caso Esquerda-Esquerda
         if balanceamento > 1 and self.obter_balanceamento(no.esquerda) >= 0:
             return self.rotacionar_direita(no)
+        # Caso Esquerda-Direita
         if balanceamento > 1 and self.obter_balanceamento(no.esquerda) < 0:
             no.esquerda = self.rotacionar_esquerda(no.esquerda)
             return self.rotacionar_direita(no)
+        # Caso Direita-Direita
         if balanceamento < -1 and self.obter_balanceamento(no.direita) <= 0:
             return self.rotacionar_esquerda(no)
+        # Caso Direita-Esquerda
         if balanceamento < -1 and self.obter_balanceamento(no.direita) > 0:
             no.direita = self.rotacionar_direita(no.direita)
             return self.rotacionar_esquerda(no)
@@ -108,15 +198,41 @@ class ArvoreAVL:
         return no
 
     def remover_chave(self, chave):
+        """
+        Método público para remover da árvore
+        
+        Args:
+            chave (int): Chave a ser removida
+        """
         self.raiz = self.remover(self.raiz, chave)
 
     def obter_no_minimo(self, no):
+        """
+        Encontra o nó com menor chave em uma subárvore
+        
+        Args:
+            no (No): Raiz da subárvore
+            
+        Returns:
+            No: Nó com menor chave (mais à esquerda)
+        """
         atual = no
         while atual.esquerda is not None:
             atual = atual.esquerda
         return atual
 
     def buscar(self, no, chave):
+        """
+        Busca recursiva por uma chave na árvore
+        Complexidade: O(log n)
+        
+        Args:
+            no (No | None): Raiz da subárvore
+            chave (int): Chave a ser buscada
+            
+        Returns:
+            No | None: Nó encontrado ou None
+        """
         if not no or no.chave == chave:
             return no
         elif chave < no.chave:
@@ -125,6 +241,10 @@ class ArvoreAVL:
             return self.buscar(no.direita, chave)
 
     def percorrer_em_ordem(self, no=None):
+        """
+        Percorre a árvore em ordem (esquerda → raiz → direita)
+        Imprime as chaves em ordem crescente
+        """
         if self.raiz is None:
             print("Árvore vazia")
             return
@@ -138,22 +258,49 @@ class ArvoreAVL:
         _em_ordem(self.raiz)
 
     def gerar_mermaid(self, no=None):
+        """
+        Gera representação da árvore em formato Mermaid
+        Exibe informações do produto em cada nó
+        
+        Args:
+            no (No | None): Raiz da subárvore (usa self.raiz se None)
+            
+        Returns:
+            str: String em formato Mermaid com sintaxe graph TD
+        """
         if no is None:
             no = self.raiz
+        
+        if no is None:
+            return "graph TD;\nVazio[\"Árvore Vazia\"]"
+            
         resultado = "graph TD;\n"
         nos = []
         arestas = []
+        estilos = []
 
         def percorrer(n):
             if n:
-                nos.append(f"{n.chave}(( {n.chave} ))")
+                # Formata o label do nó com informações do produto
+                if n.valor:
+                    # Limita o nome a 20 caracteres
+                    nome = n.valor.nome[:20] + "..." if len(n.valor.nome) > 20 else n.valor.nome
+                    preco = f"R$ {n.valor.preco:.2f}"
+                    label = f"{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
+                    nos.append(f'    Node{n.chave}["{label}"]')
+                else:
+                    nos.append(f'    Node{n.chave}["{n.chave}"]')
+                
+                # Adiciona estilo para o nó
+                estilos.append(f"    style Node{n.chave} fill:#60a5fa,stroke:#2563eb,stroke-width:2px,color:#fff")
+                
                 if n.esquerda:
-                    arestas.append(f"{n.chave} --> {n.esquerda.chave}")
+                    arestas.append(f"    Node{n.chave} --> Node{n.esquerda.chave}")
                     percorrer(n.esquerda)
                 if n.direita:
-                    arestas.append(f"{n.chave} --> {n.direita.chave}")
+                    arestas.append(f"    Node{n.chave} --> Node{n.direita.chave}")
                     percorrer(n.direita)
 
         percorrer(no)
-        resultado += "\n".join(nos + arestas)
+        resultado += "\n".join(nos + [""] + arestas + [""] + estilos)
         return resultado

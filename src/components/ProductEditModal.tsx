@@ -53,9 +53,23 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
+    let processedValue: string | number = value;
+    
+    if (type === 'number') {
+      if (name === 'quantidade') {
+        // Para quantidade, usar parseInt
+        processedValue = value === '' ? 0 : parseInt(value) || 0;
+      } else if (name === 'preco') {
+        // Para preço, usar parseFloat
+        processedValue = value === '' ? 0 : parseFloat(value) || 0;
+      } else {
+        processedValue = parseFloat(value) || 0;
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: (type === 'number') ? parseFloat(value) || 0 : value,
+      [name]: processedValue,
     }));
 
     if (validationErrors[name]) {
@@ -73,25 +87,35 @@ const validateForm = (): boolean => {
     const quantidade = Number(formData.quantidade);
     const categoria = (formData.categoria ?? '').toString().trim();
 
+    console.log('Validando:', { nome, preco, quantidade, categoria });
+
     const checks: Array<[string, string] | null> = [
         nome ? (nome.length < 3 ? ['nome', 'O nome deve conter ao menos 3 caracteres.'] : null) : ['nome', 'Nome do produto é obrigatório.'],
         (!isFinite(preco) || preco <= 0) ? ['preco', 'Informe um preço válido maior que zero.'] : (preco > 1_000_000 ? ['preco', 'Preço muito alto. Verifique o valor informado.'] : null),
         (!Number.isInteger(quantidade) || quantidade < 0) ? ['quantidade', 'A quantidade deve ser um número inteiro não negativo.'] : (quantidade > 1_000_000 ? ['quantidade', 'Quantidade muito alta. Verifique o valor informado.'] : null),
-        (categoria && !productCategories.includes(categoria)) ? ['categoria', 'Categoria inválida. Selecione uma opção válida.'] : null
+        (!categoria || categoria === '') ? ['categoria', 'A categoria é obrigatória.'] : 
+          (categoria && !productCategories.includes(categoria)) ? ['categoria', 'Categoria inválida. Selecione uma opção válida.'] : null
     ];
 
     const errors = checks
         .filter((c): c is [string, string] => Boolean(c))
         .reduce<Record<string, string>>((acc, [key, msg]) => ({ ...acc, [key]: msg }), {});
 
+    console.log('Erros encontrados:', errors);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
 };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    console.log('Form data antes da validação:', formData);
     
+    if (!validateForm()) {
+      console.log('Erros de validação:', validationErrors);
+      return;
+    }
+    
+    console.log('Formulário válido, chamando onSave com:', formData);
     onSave(formData);
   };
 

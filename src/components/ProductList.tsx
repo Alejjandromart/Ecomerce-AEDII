@@ -17,13 +17,15 @@ const ProductList: React.FC = () => {
     buscarProduto, 
     addProduto, 
     atualizarProduto, 
-    deletarProduto, 
+    deletarProduto,
+    clearAllProducts,
   } = useProductStore();
   
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showLoadModal, setShowLoadModal] = useState(false);
 
   useEffect(() => {
     buscarProduto();
@@ -69,21 +71,17 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const handleCarregarProdutosExemplo = async () => {
-    const confirmacao = window.confirm(
-      `Deseja carregar ${produtosExemplo.length} produtos de exemplo?\n\n` +
-      'Isso adicionará produtos em várias categorias para testar o sistema.'
-    );
+  const handleCarregarProdutosExemplo = async (quantidade: number) => {
+    setShowLoadModal(false);
     
-    if (!confirmacao) return;
-
-    const toastId = toast.loading(`Carregando ${produtosExemplo.length} produtos...`);
+    const produtosParaCarregar = produtosExemplo.slice(0, quantidade);
+    const toastId = toast.loading(`Carregando ${quantidade} produtos...`);
     
     try {
       let sucessos = 0;
       let erros = 0;
 
-      for (const produto of produtosExemplo) {
+      for (const produto of produtosParaCarregar) {
         try {
           const produtoComId: Product = {
             ...produto,
@@ -114,35 +112,37 @@ const ProductList: React.FC = () => {
     }
   };
 
+  const handleLimparTodosProdutos = () => {
+    const confirmacao = window.confirm(
+      `⚠️ Tem certeza que deseja remover TODOS os ${products.length} produtos?\n\n` +
+      'Esta ação não pode ser desfeita!'
+    );
+    
+    if (confirmacao) {
+      clearAllProducts();
+      toast.success('🗑️ Todos os produtos foram removidos!');
+    }
+  };
+
 
   const filteredProducts = products.filter(product => 
     product.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.categoria.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (error && !isLoading && products.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full">
-          <h3 className="text-lg font-medium text-red-800 mb-2">Erro ao Carregar Produtos</h3>
-          <p className="text-red-700">{error}</p>
-          <button 
-            onClick={() => buscarProduto()} 
-            className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition"
-          >
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <Toaster position="top-right" />
       
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Lista de Produtos</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-gray-800">Lista de Produtos</h1>
+          {products.length > 0 && (
+            <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+              {products.length} {products.length === 1 ? 'produto' : 'produtos'}
+            </span>
+          )}
+        </div>
         
         <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
           <div className="relative">
@@ -161,22 +161,35 @@ const ProductList: React.FC = () => {
           </div>
           
           <button 
-            onClick={handleCarregarProdutosExemplo}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition flex items-center justify-center"
-            title="Carregar 47 produtos de exemplo para testar o sistema"
+            onClick={() => setShowLoadModal(true)}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition flex items-center justify-center whitespace-nowrap"
+            title="Carregar produtos de exemplo para testar o sistema"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
             Carregar Exemplos
           </button>
+
+          {products.length > 0 && (
+            <button 
+              onClick={handleLimparTodosProdutos}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition flex items-center justify-center whitespace-nowrap"
+              title="Remover todos os produtos"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Limpar Todos
+            </button>
+          )}
           
           <button 
             onClick={() => {
               setSelectedProduct(null);
               setIsEditModalOpen(true);
             }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition flex items-center justify-center"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition flex items-center justify-center whitespace-nowrap"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -253,6 +266,66 @@ const ProductList: React.FC = () => {
           onClose={handleCloseModal}
           isSubmitting={isSubmitting}
         />
+      )}
+
+      {/* Modal de seleção de quantidade */}
+      {showLoadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Carregar Produtos de Exemplo</h2>
+            <p className="text-gray-600 mb-6">
+              Escolha quantos produtos deseja adicionar ao sistema:
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => handleCarregarProdutosExemplo(5)}
+                className="w-full px-6 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition flex items-center justify-between group"
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="font-semibold">5 Produtos</span>
+                </div>
+                <span className="text-sm opacity-90">Teste rápido</span>
+              </button>
+
+              <button
+                onClick={() => handleCarregarProdutosExemplo(10)}
+                className="w-full px-6 py-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center justify-between group"
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-semibold">10 Produtos</span>
+                </div>
+                <span className="text-sm opacity-90">Teste médio</span>
+              </button>
+
+              <button
+                onClick={() => handleCarregarProdutosExemplo(23)}
+                className="w-full px-6 py-4 bg-green-500 hover:bg-green-600 text-white rounded-lg transition flex items-center justify-between group"
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                  <span className="font-semibold">23 Produtos</span>
+                </div>
+                <span className="text-sm opacity-90">Teste completo</span>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowLoadModal(false)}
+              className="w-full mt-4 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

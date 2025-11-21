@@ -2,42 +2,79 @@ import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { TreeVisualization } from "../components/TreeVisualization"
 import { useProductStore } from "../hooks/useProductStore"
+import { buscarProdutosAVL } from "../services/api"
+import toast from "react-hot-toast"
+
+const MODE = import.meta.env.VITE_MODE || 'offline';
 
 export const ArvorePage: React.FC = () => {
   const { products } = useProductStore()
   const [treeString, setTreeString] = useState<string>("")
+  const [isLoadingTree, setIsLoadingTree] = useState(false)
 
-  // Gera um exemplo de árvore Mermaid baseado nos produtos
+  // Carrega a árvore do backend ou gera exemplo local
   useEffect(() => {
     if (products.length === 0) {
       setTreeString("")
       return
     }
 
-    // Exemplo de estrutura de árvore Mermaid
-    // Em produção, isso viria do backend
-    const mermaidCode = `
-graph TD
-    Root["Raiz"]
-    ${products.slice(0, 7).map((p, i) => `
-    Node${i}["${p.nome}<br/>R$ ${p.preco.toFixed(2)}"]
-    `).join('')}
+    const loadTree = async () => {
+      if (MODE === 'online') {
+        // Modo ONLINE: Busca árvore real do backend
+        setIsLoadingTree(true)
+        try {
+          const mermaidString = await buscarProdutosAVL()
+          setTreeString(mermaidString)
+        } catch (error) {
+          console.error('Erro ao carregar árvore do backend:', error)
+          toast.error('Erro ao carregar árvore. Usando visualização local.')
+          generateLocalTree()
+        } finally {
+          setIsLoadingTree(false)
+        }
+      } else {
+        // Modo OFFLINE: Gera árvore exemplo local
+        generateLocalTree()
+      }
+    }
+
+    const generateLocalTree = () => {
+      // Árvore simulada com formato melhorado
+      const maxProducts = Math.min(7, products.length);
+      const displayProducts = products.slice(0, maxProducts);
+      
+      const nodes = displayProducts.map((p, i) => {
+        const nome = p.nome.length > 20 ? p.nome.substring(0, 20) + '...' : p.nome;
+        return `    Node${i}["${nome}<br/>R$ ${p.preco.toFixed(2)}<br/>Qtd: ${p.quantidade}"]`;
+      }).join('\n');
+      
+      const styles = displayProducts.map((_, i) => 
+        `    style Node${i} fill:#60a5fa,stroke:#2563eb,stroke-width:2px,color:#fff`
+      ).join('\n');
+      
+      const edges = [];
+      if (maxProducts > 0) edges.push('    Root --> Node0');
+      if (maxProducts > 1) edges.push('    Root --> Node1');
+      if (maxProducts > 2) edges.push('    Node0 --> Node2');
+      if (maxProducts > 3) edges.push('    Node0 --> Node3');
+      if (maxProducts > 4) edges.push('    Node1 --> Node4');
+      if (maxProducts > 5) edges.push('    Node1 --> Node5');
+      if (maxProducts > 6) edges.push('    Node2 --> Node6');
+      
+      const mermaidCode = `graph TD
+    Root["📦 Raiz"]
+${nodes}
     
-    Root --> Node0
-    Root --> Node1
-    ${products.length > 2 ? 'Node0 --> Node2' : ''}
-    ${products.length > 3 ? 'Node0 --> Node3' : ''}
-    ${products.length > 4 ? 'Node1 --> Node4' : ''}
-    ${products.length > 5 ? 'Node1 --> Node5' : ''}
-    ${products.length > 6 ? 'Node2 --> Node6' : ''}
+${edges.join('\n')}
     
     style Root fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
-    ${products.slice(0, 7).map((_, i) => `
-    style Node${i} fill:#60a5fa,stroke:#2563eb,stroke-width:2px,color:#fff
-    `).join('')}
-    `
+${styles}`;
+      
+      setTreeString(mermaidCode);
+    }
 
-    setTreeString(mermaidCode)
+    loadTree()
   }, [products])
 
   return (
@@ -61,6 +98,8 @@ graph TD
               </h1>
               <p className="text-gray-600">
                 Estrutura de dados balanceada dos produtos cadastrados
+                {MODE === 'online' && <span className="ml-2 text-green-600 font-semibold">● Online</span>}
+                {MODE === 'offline' && <span className="ml-2 text-gray-500 font-semibold">● Offline</span>}
               </p>
             </div>
             <div className="text-right">
@@ -69,9 +108,16 @@ graph TD
             </div>
           </div>
 
-          {products.length === 0 ? (
+          {isLoadingTree ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-pulse flex flex-col items-center">
+                <div className="h-12 w-12 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin"></div>
+                <p className="mt-4 text-gray-600">Carregando árvore...</p>
+              </div>
+            </div>
+          ) : products.length === 0 ? (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-              <div className="text-6xl mb-4">�</div>
+              <div className="text-6xl mb-4">📦</div>
               <p className="text-gray-700 font-medium mb-2">Nenhum produto cadastrado</p>
               <p className="text-sm text-gray-600 mb-4">
                 Adicione produtos para visualizar a árvore AVL

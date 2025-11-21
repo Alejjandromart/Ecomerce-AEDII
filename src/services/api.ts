@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Product } from "../types/product";
 
-const API_URL = 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // CRUD operations for Products
 // buscar todos os produtos
