@@ -11,7 +11,6 @@ import axios from 'axios';
 
 // Configuração de ambiente
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const MODE = import.meta.env.VITE_MODE || 'offline'; // 'offline' ou 'online'
 
 // Chave para armazenar no localStorage
 const STORAGE_KEY = 'ecommerce-produtos';
@@ -56,7 +55,7 @@ interface ProductStoreState {
     addProduto: (product: Product) => Promise<void>;
     atualizarProduto: (product: Product) => Promise<void>;
     deletarProduto: (id: string) => Promise<void>;
-    clearAllProducts: () => void;
+    clearAllProducts: () => Promise<void>;
 
     // Configuração de estado
     setProducts: (products: Product[]) => void;
@@ -75,12 +74,13 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
      */
     buscarProduto: async () => {
         set({ isLoading: true, error: null });
+        const mode = import.meta.env.VITE_MODE || 'offline';
         try {
-            if (MODE === 'online') {
+            if (mode === 'online') {
                 // Modo ONLINE: Busca do backend e adapta formato
                 const response = await axios.get(`${API_BASE_URL}/produtos`);
                 console.log('Produtos do backend:', response.data);
-                
+
                 // Adapta produtos do backend para formato do frontend
                 const produtos = (response.data.produtos || []).map((p: any) => ({
                     id: String(p.codigo),
@@ -89,7 +89,7 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                     quantidade: p.quantidade,
                     categoria: Array.isArray(p.categoria) ? p.categoria[0] : p.categoria
                 }));
-                
+
                 set({ products: produtos, error: null });
             } else {
                 // Modo OFFLINE: Busca do localStorage
@@ -101,8 +101,8 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
             console.error('Erro ao buscar produtos:', error);
             // Em caso de erro, carrega do localStorage como fallback
             const products = loadProductsFromStorage();
-            set({ 
-                products, 
+            set({
+                products,
                 error: null // Não mostra erro se conseguiu carregar do localStorage
             });
         } finally {
@@ -117,11 +117,12 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
      */
     addProduto: async (product: Product) => {
         set({ isLoading: true });
+        const mode = import.meta.env.VITE_MODE || 'offline';
         try {
             console.log('Adicionando produto:', product);
-            console.log('Modo:', MODE);
-            
-            if (MODE === 'online') {
+            console.log('Modo:', mode);
+
+            if (mode === 'online') {
                 // Modo ONLINE: Adapta e envia para o backend
                 const backendProduct = {
                     codigo: parseInt(product.id) || Date.now(),
@@ -131,10 +132,10 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                     categoria: [product.categoria] // Backend espera array
                 };
                 console.log('Enviando para backend:', backendProduct);
-                
+
                 const response = await axios.post(`${API_BASE_URL}/produtos`, backendProduct);
                 console.log('Resposta do backend:', response.data);
-                
+
                 // Converte resposta do backend para formato do frontend
                 const newProduct: Product = {
                     id: String(response.data.produto?.codigo || Date.now()),
@@ -143,7 +144,7 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                     quantidade: response.data.produto?.quantidade || product.quantidade,
                     categoria: response.data.produto?.categoria?.[0] || product.categoria
                 };
-                
+
                 set(state => ({
                     products: [...state.products, newProduct],
                     error: null
@@ -153,8 +154,8 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                 await new Promise(resolve => setTimeout(resolve, 50));
                 const newProduct: Product = {
                     ...product,
-                    id: product.id.toString().startsWith('temp-') 
-                        ? String(Date.now()) 
+                    id: product.id.toString().startsWith('temp-')
+                        ? String(Date.now())
                         : product.id
                 };
                 console.log('Novo produto gerado:', newProduct);
@@ -180,8 +181,9 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
      */
     atualizarProduto: async (product: Product) => {
         set({ isLoading: true });
+        const mode = import.meta.env.VITE_MODE || 'offline';
         try {
-            if (MODE === 'online') {
+            if (mode === 'online') {
                 // Modo ONLINE: Adapta e envia para o backend
                 const codigo = parseInt(product.id);
                 const backendProduct = {
@@ -191,7 +193,7 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                     quantidade: product.quantidade,
                     categoria: [product.categoria]
                 };
-                
+
                 await axios.put(`${API_BASE_URL}/produtos/${codigo}`, backendProduct);
                 set(state => ({
                     products: state.products.map(p => p.id === product.id ? product : p),
@@ -200,7 +202,7 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
             } else {
                 // Modo OFFLINE: Atualiza no localStorage
                 await new Promise(resolve => setTimeout(resolve, 300));
-                const updatedProducts = get().products.map(p => 
+                const updatedProducts = get().products.map(p =>
                     p.id === product.id ? product : p
                 );
                 saveProductsToStorage(updatedProducts);
@@ -221,8 +223,9 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
      */
     deletarProduto: async (id: string) => {
         set({ isLoading: true });
+        const mode = import.meta.env.VITE_MODE || 'offline';
         try {
-            if (MODE === 'online') {
+            if (mode === 'online') {
                 // Modo ONLINE: Deleta do backend
                 const codigo = parseInt(id);
                 await axios.delete(`${API_BASE_URL}/produtos/${codigo}`);
@@ -254,25 +257,58 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
         saveProductsToStorage(products);
         set({ products });
     },
-    
+
     /**
      * Define estado de loading
      * @param isLoading - Indica se há operação em andamento
      */
     setLoading: (isLoading: boolean) => set({ isLoading }),
-    
+
     /**
      * Define mensagem de erro
      * @param error - Mensagem de erro ou null
      */
     setError: (error: string | null) => set({ error }),
-    
+
     /**
      * Remove todos os produtos do catálogo
      * Limpa localStorage e estado da aplicação
      */
-    clearAllProducts: () => {
-        localStorage.removeItem(STORAGE_KEY);
-        set({ products: [], error: null });
+    clearAllProducts: async () => {
+        const mode = import.meta.env.VITE_MODE || 'offline';
+
+        if (mode === 'online') {
+            // Modo ONLINE: Tenta deletar todos os produtos
+            // Como não temos endpoint de limpar tudo, vamos iterar sobre os produtos atuais
+            // e deletar um por um. Isso é lento mas garante consistência.
+            const currentProducts = get().products;
+
+            set({ isLoading: true });
+            try {
+                // Deleta em paralelo para ser mais rápido
+                await Promise.all(currentProducts.map(async (p) => {
+                    try {
+                        const codigo = parseInt(p.id);
+                        await axios.delete(`${API_BASE_URL}/produtos/${codigo}`);
+                    } catch (e) {
+                        console.error(`Erro ao deletar produto ${p.id}`, e);
+                    }
+                }));
+
+                set({ products: [], error: null });
+                toast.success('🗑️ Todos os produtos foram removidos!');
+            } catch (error) {
+                console.error('Erro ao limpar produtos:', error);
+                set({ error: 'Erro ao limpar produtos do backend' });
+                toast.error('❌ Erro ao limpar produtos');
+            } finally {
+                set({ isLoading: false });
+            }
+        } else {
+            // Modo OFFLINE
+            localStorage.removeItem(STORAGE_KEY);
+            set({ products: [], error: null });
+            toast.success('🗑️ Armazenamento local limpo!');
+        }
     },
 }));
