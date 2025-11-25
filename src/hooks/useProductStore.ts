@@ -269,10 +269,33 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
     
     /**
      * Remove todos os produtos do catálogo
-     * Limpa localStorage e estado da aplicação
+     * Limpa localStorage e backend (modo online)
      */
-    clearAllProducts: () => {
-        localStorage.removeItem(STORAGE_KEY);
-        set({ products: [], error: null });
+    clearAllProducts: async () => {
+        try {
+            if (MODE === 'online') {
+                // Modo ONLINE: Remove todos os produtos do backend
+                const currentProducts = get().products;
+                
+                // Remove cada produto do backend
+                for (const product of currentProducts) {
+                    try {
+                        const codigo = parseInt(product.id);
+                        await axios.delete(`${API_BASE_URL}/produtos/${codigo}`);
+                    } catch (error) {
+                        console.error(`Erro ao remover produto ${product.id}:`, error);
+                    }
+                }
+            }
+            
+            // Limpa localStorage e estado local
+            localStorage.removeItem(STORAGE_KEY);
+            set({ products: [], error: null });
+        } catch (error) {
+            console.error('Erro ao limpar produtos:', error);
+            // Mesmo com erro, limpa o estado local
+            localStorage.removeItem(STORAGE_KEY);
+            set({ products: [], error: null });
+        }
     },
 }));

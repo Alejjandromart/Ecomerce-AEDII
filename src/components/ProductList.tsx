@@ -112,15 +112,20 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const handleLimparTodosProdutos = () => {
+  const handleLimparTodosProdutos = async () => {
     const confirmacao = window.confirm(
       `⚠️ Tem certeza que deseja remover TODOS os ${products.length} produtos?\n\n` +
       'Esta ação não pode ser desfeita!'
     );
     
     if (confirmacao) {
-      clearAllProducts();
-      toast.success('🗑️ Todos os produtos foram removidos!');
+      const toastId = toast.loading('🗑️ Removendo todos os produtos...');
+      try {
+        await clearAllProducts();
+        toast.success('🗑️ Todos os produtos foram removidos!', { id: toastId });
+      } catch (error) {
+        toast.error('❌ Erro ao remover produtos', { id: toastId });
+      }
     }
   };
 
