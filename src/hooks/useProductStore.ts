@@ -82,13 +82,17 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
                 console.log('Produtos do backend:', response.data);
 
                 // Adapta produtos do backend para formato do frontend
-                const produtos = (response.data.produtos || []).map((p: any) => ({
-                    id: String(p.codigo),
-                    nome: p.nome,
-                    preco: p.preco,
-                    quantidade: p.quantidade,
-                    categoria: Array.isArray(p.categoria) ? p.categoria[0] : p.categoria
-                }));
+                const produtos = (response.data.produtos || []).map((p: any) => {
+                    const produto = {
+                        id: p.codigo.toString(), // Garante conversão consistente
+                        nome: p.nome,
+                        preco: p.preco,
+                        quantidade: p.quantidade,
+                        categoria: Array.isArray(p.categoria) ? p.categoria[0] : p.categoria
+                    };
+                    console.log('[STORE DEBUG] Produto do backend:', p.codigo, '(tipo:', typeof p.codigo, ') → frontend:', produto.id);
+                    return produto;
+                });
 
                 set({ products: produtos, error: null });
             } else {
@@ -124,8 +128,9 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
 
             if (mode === 'online') {
                 // Modo ONLINE: Adapta e envia para o backend
+                const codigo = parseInt(product.id);
                 const backendProduct = {
-                    codigo: parseInt(product.id) || Date.now(),
+                    codigo: isNaN(codigo) ? Math.floor(Date.now()) : codigo,
                     nome: product.nome,
                     preco: product.preco,
                     quantidade: product.quantidade,
@@ -138,12 +143,13 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
 
                 // Converte resposta do backend para formato do frontend
                 const newProduct: Product = {
-                    id: String(response.data.produto?.codigo || Date.now()),
+                    id: (response.data.produto?.codigo || Math.floor(Date.now())).toString(),
                     nome: response.data.produto?.nome || product.nome,
                     preco: response.data.produto?.preco || product.preco,
                     quantidade: response.data.produto?.quantidade || product.quantidade,
                     categoria: response.data.produto?.categoria?.[0] || product.categoria
                 };
+                console.log('[STORE DEBUG] Produto adicionado no frontend:', newProduct);
 
                 set(state => ({
                     products: [...state.products, newProduct],

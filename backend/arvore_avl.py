@@ -102,27 +102,38 @@ class ArvoreAVL:
             No: Nova raiz da subárvore após inserção e balanceamento
         """
         if not no:
+            print(f"[AVL]   ✓ Criando nó folha: ID={chave}")
             return No(chave, valor)
-        elif chave < no.chave:
+        
+        if chave < no.chave:
+            print(f"[AVL]   {chave} < {no.chave} → ⬅️  ESQUERDA")
             no.esquerda = self.inserir(no.esquerda, chave, valor)
         else:
+            print(f"[AVL]   {chave} ≥ {no.chave} → ➡️  DIREITA")
             no.direita = self.inserir(no.direita, chave, valor)
 
         no.altura = 1 + max(self.obter_altura(no.esquerda), self.obter_altura(no.direita))
         balanceamento = self.obter_balanceamento(no)
+        
+        if balanceamento != 0:
+            print(f"[AVL]   Nó {no.chave}: fator de balanceamento = {balanceamento}")
 
         # Caso Esquerda-Esquerda
         if balanceamento > 1 and chave < no.esquerda.chave:
+            print(f"[AVL] 🔄 Rotação DIREITA no nó {no.chave}")
             return self.rotacionar_direita(no)
         # Caso Direita-Direita
         if balanceamento < -1 and chave > no.direita.chave:
+            print(f"[AVL] 🔄 Rotação ESQUERDA no nó {no.chave}")
             return self.rotacionar_esquerda(no)
         # Caso Esquerda-Direita
         if balanceamento > 1 and chave > no.esquerda.chave:
+            print(f"[AVL] 🔄 Rotação DUPLA: ESQUERDA-DIREITA no nó {no.chave}")
             no.esquerda = self.rotacionar_esquerda(no.esquerda)
             return self.rotacionar_direita(no)
         # Caso Direita-Esquerda
         if balanceamento < -1 and chave < no.direita.chave:
+            print(f"[AVL] 🔄 Rotação DUPLA: DIREITA-ESQUERDA no nó {no.chave}")
             no.direita = self.rotacionar_direita(no.direita)
             return self.rotacionar_esquerda(no)
 
@@ -136,6 +147,14 @@ class ArvoreAVL:
             chave (int): Chave a ser inserida
             valor: Valor associado à chave
         """
+        # Debug: verifica tipo da chave
+        nome_produto = valor.nome if valor else "sem nome"
+        print(f"[AVL] 📥 Inserindo '{nome_produto}' com ID={chave}")
+        # Garante que a chave seja int
+        if not isinstance(chave, int):
+            chave = int(chave)
+            print(f"[AVL] ⚠️  Chave convertida para int: {chave}")
+        
         self.raiz = self.inserir(self.raiz, chave, valor)
 
     def remover(self, no, chave):
@@ -286,9 +305,10 @@ class ArvoreAVL:
                     # Limita o nome a 20 caracteres
                     nome = n.valor.nome[:20] + "..." if len(n.valor.nome) > 20 else n.valor.nome
                     preco = f"R$ {n.valor.preco:.2f}"
-                    # Reduz o ID para os últimos 4 dígitos
-                    id_curto = str(n.chave)[-4:]
-                    label = f"ID: {id_curto}<br/>{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
+                    # Mostra ID completo para IDs pequenos (até 5 dígitos)
+                    chave_str = str(n.chave)
+                    id_display = chave_str if len(chave_str) <= 5 else f"...{chave_str[-4:]}"
+                    label = f"ID: {id_display}<br/>{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
                     nos.append(f'    Node{n.chave}["{label}"]')
                 else:
                     nos.append(f'    Node{n.chave}["{n.chave}"]')

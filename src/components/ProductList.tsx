@@ -48,10 +48,14 @@ const ProductList: React.FC = () => {
   const handleSaveEdit = async (updatedProduct: Product) => {
     setIsSubmitting(true);
     try {
-      // If it's a new product (temp id)
-      if (updatedProduct.id.toString().indexOf('temp-') === 0) {
+      // Verifica se é produto novo (não existe na lista atual)
+      const produtoExiste = products.some(p => p.id === updatedProduct.id);
+      
+      if (!produtoExiste) {
+        // Produto novo - adiciona
         await addProduto(updatedProduct);
       } else {
+        // Produto existente - atualiza
         await atualizarProduto(updatedProduct);
       }
       setIsEditModalOpen(false);
@@ -80,12 +84,16 @@ const ProductList: React.FC = () => {
     try {
       let sucessos = 0;
       let erros = 0;
+      // Gera códigos sequenciais baseados no timestamp inicial
+      const baseTimestamp = Math.floor(Date.now());
 
-      for (const produto of produtosParaCarregar) {
+      for (let i = 0; i < produtosParaCarregar.length; i++) {
+        const produto = produtosParaCarregar[i];
         try {
           const produtoComId: Product = {
             ...produto,
-            id: `exemplo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            // Gera código sequencial inteiro: baseTimestamp + índice * 1000 para garantir ordem
+            id: (baseTimestamp + (i * 1000)).toString()
           };
           await addProduto(produtoComId);
           sucessos++;

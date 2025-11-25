@@ -45,7 +45,8 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
         } else {
             setFormData({
                 ...initialProductState,
-                id: `temp-${Date.now()}`,
+                // Gera ID numérico inteiro para manter ordenação na árvore AVL
+                id: Math.floor(Date.now()).toString(),
         });
         }
     }, [product]);
