@@ -286,8 +286,8 @@ class ArvoreAVL:
                     # Limita o nome a 20 caracteres
                     nome = n.valor.nome[:20] + "..." if len(n.valor.nome) > 20 else n.valor.nome
                     preco = f"R$ {n.valor.preco:.2f}"
-                    # Reduz o ID para os últimos 7 dígitos
-                    id_curto = str(n.chave)[-7:]
+                    # Reduz o ID para os últimos 4 dígitos
+                    id_curto = str(n.chave)[-4:]
                     label = f"ID: {id_curto}<br/>{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
                     nos.append(f'    Node{n.chave}["{label}"]')
                 else:

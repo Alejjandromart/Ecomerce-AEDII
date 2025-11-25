@@ -179,7 +179,7 @@ export const ArvorePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Coluna da Esquerda: Árvore AVL (Ocupa 2/3) */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[500px]">
+              <div className="bg-white rounded-2xl shadow-lg p-6" style={{ height: 'calc(100vh - 250px)', minHeight: '700px' }}>
                 <div className="flex items-center justify-between mb-4 border-b pb-4">
                   <h2 className="text-xl font-bold text-gray-800 flex items-center">
                     <span className="mr-2">🌲</span> Visualização da Estrutura
@@ -190,14 +190,14 @@ export const ArvorePage: React.FC = () => {
                 </div>
 
                 {isLoadingTree ? (
-                  <div className="flex justify-center items-center h-64">
+                  <div className="flex justify-center items-center" style={{ height: 'calc(100% - 70px)' }}>
                     <div className="animate-pulse flex flex-col items-center">
                       <div className="h-12 w-12 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin"></div>
                       <p className="mt-4 text-gray-600">Carregando estrutura...</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="overflow-auto">
+                  <div className="overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 70px)' }}>
                     <TreeVisualization treeString={treeString} />
                   </div>
                 )}
@@ -229,52 +229,52 @@ export const ArvorePage: React.FC = () => {
             </div>
 
             {/* Coluna da Direita: Estatísticas (Ocupa 1/3) */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Cards Resumo */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
-                  <p className="text-xs text-gray-500 uppercase font-bold">Total Produtos</p>
-                  <p className="text-2xl font-bold text-gray-800">{stats.totalProdutos}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white rounded-lg shadow p-3 border-l-4 border-blue-500">
+                  <p className="text-xs text-gray-500 uppercase font-semibold">Total Produtos</p>
+                  <p className="text-xl font-bold text-gray-800">{stats.totalProdutos}</p>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4 border-l-4 border-green-500">
-                  <p className="text-xs text-gray-500 uppercase font-bold">Valor Total</p>
-                  <p className="text-lg font-bold text-green-600 truncate" title={formatPrice(stats.valorTotalEstoque)}>
+                <div className="bg-white rounded-lg shadow p-3 border-l-4 border-green-500">
+                  <p className="text-xs text-gray-500 uppercase font-semibold">Valor Total</p>
+                  <p className="text-sm font-bold text-green-600 truncate" title={formatPrice(stats.valorTotalEstoque)}>
                     {formatPrice(stats.valorTotalEstoque)}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4 border-l-4 border-purple-500">
-                  <p className="text-xs text-gray-500 uppercase font-bold">Itens Estoque</p>
-                  <p className="text-2xl font-bold text-gray-800">{stats.quantidadeTotalItens}</p>
+                <div className="bg-white rounded-lg shadow p-3 border-l-4 border-purple-500">
+                  <p className="text-xs text-gray-500 uppercase font-semibold">Itens Estoque</p>
+                  <p className="text-xl font-bold text-gray-800">{stats.quantidadeTotalItens}</p>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4 border-l-4 border-orange-500">
-                  <p className="text-xs text-gray-500 uppercase font-bold">Preço Médio</p>
-                  <p className="text-lg font-bold text-gray-800 truncate">
+                <div className="bg-white rounded-lg shadow p-3 border-l-4 border-orange-500">
+                  <p className="text-xs text-gray-500 uppercase font-semibold">Preço Médio</p>
+                  <p className="text-sm font-bold text-gray-800 truncate">
                     {formatPrice(stats.precoMedio)}
                   </p>
                 </div>
               </div>
 
               {/* Métricas da Árvore */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+              <div className="bg-white rounded-lg shadow-lg p-4">
+                <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center border-b pb-2">
                   <span className="mr-2">📐</span> Métricas da Árvore
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Altura da Árvore</span>
-                    <span className="font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    <span className="text-sm text-gray-600">Altura da Árvore</span>
+                    <span className="font-bold text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                       {stats.alturaArvore}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Complexidade</span>
-                    <span className="font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    <span className="text-sm text-gray-600">Complexidade</span>
+                    <span className="font-bold text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
                       O(log n)
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Nós Folha (Est.)</span>
-                    <span className="font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
+                    <span className="text-sm text-gray-600">Nós Folha (Est.)</span>
+                    <span className="font-bold text-sm text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
                       ~{Math.ceil(stats.totalProdutos / 2)}
                     </span>
                   </div>
@@ -282,11 +282,11 @@ export const ArvorePage: React.FC = () => {
               </div>
 
               {/* Categorias */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+              <div className="bg-white rounded-lg shadow-lg p-4">
+                <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center border-b pb-2">
                   <span className="mr-2">🏷️</span> Categorias
                 </h3>
-                <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                   {Object.entries(stats.categorias)
                     .sort(([, a], [, b]) => b.count - a.count)
                     .map(([categoria, data]) => (
