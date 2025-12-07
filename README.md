@@ -1,209 +1,70 @@
-# 🛒 Ecomerce-AEDII
+# E-commerce AED II - Cat�logo de Produtos com �rvore AVL
 
-Sistema de gerenciamento de produtos com visualização de estrutura de dados AVL, desenvolvido para a disciplina de **Algoritmos e Estrutura de Dados II** da UFAM.
+Este projeto � uma aplica��o de cat�logo de produtos desenvolvida para a disciplina de **Algoritmos e Estrutura de Dados II**. O objetivo principal � demonstrar a efici�ncia e o funcionamento de uma **�rvore AVL (Adelson-Velsky and Landis)** na pr�tica, comparando-a com estruturas lineares (listas).
 
----
+##  Funcionalidades
 
-## 📋 Sobre o Projeto
+*   **Visualiza��o Interativa da AVL**: Veja a �rvore sendo constru�da e balanceada em tempo real no navegador.
+*   **Gerenciamento de Produtos**: Adicione, remova e busque produtos.
+*   **Painel de Performance**: Compare o tempo de inser��o e busca entre a �rvore AVL e uma Lista tradicional.
+*   **Implementa��o H�brida**:
+    *   **Frontend (Ativo)**: React + Vite. Toda a l�gica da AVL roda no cliente para visualiza��o instant�nea.
+    *   **Backend (Refer�ncia)**: Python + FastAPI. Implementa��o cl�ssica da AVL dispon�vel na pasta ackend/ para estudo.
 
-Sistema web interativo que combina um e-commerce com conceitos acadêmicos de estruturas de dados, especificamente **Árvore AVL**. O projeto permite:
+##  Tecnologias
 
-- 📦 Gerenciamento completo de produtos (CRUD)
-- 🌲 Visualização gráfica da árvore AVL
-- 📊 Análise de complexidade e estatísticas
-- 💾 Persistência offline com localStorage
-- 🔄 Modo híbrido (online/offline)
+*   **Frontend**: React, Vite, TailwindCSS, Framer Motion (anima��es), Recharts (gr�ficos).
+*   **Backend**: Python 3.x, FastAPI (c�digo de refer�ncia).
 
----
+##  Como Executar
 
-## 🚀 Tecnologias
+### Frontend (Aplica��o Principal)
 
-- **React 19.1.1** - Biblioteca UI
-- **TypeScript** - Tipagem estática
-- **Vite 7.1.7** - Build tool
-- **Tailwind CSS 4.1.16** - Estilização
-- **Zustand** - Gerenciamento de estado
-- **React Hook Form + Zod** - Formulários e validação
-- **Mermaid.js** - Visualização de diagramas
-- **Vitest** - Testes automatizados
+1.  Instale as depend�ncias:
+    `ash
+    npm install
+    ``n
+2.  Inicie o servidor de desenvolvimento:
+    `ash
+    npm run dev
+    ``n
+3.  Acesse http://localhost:5173 no seu navegador.
 
----
+### Backend (Opcional - Para Estudo)
 
-## 📦 Instalação
+O backend em Python serve como uma implementa��o de refer�ncia da estrutura de dados.
 
-### Frontend (React + Vite)
+1.  Entre na pasta do backend:
+    `ash
+    cd backend
+    ``n
+2.  Instale as depend�ncias (recomendado usar venv):
+    `ash
+    pip install -r requirements.txt
+    ``n
+3.  Execute o servidor:
+    `ash
+    uvicorn app:app --reload
+    ``n
+##  Estrutura do Projeto
 
-```bash
-# Clone o repositório
-git clone https://github.com/Alejjandromart/Ecomerce-AEDII.git
+*   src/: C�digo fonte do Frontend React.
+    *   hooks/useAVLTree.js: **Cora��o do projeto**. Cont�m a implementa��o da �rvore AVL em JavaScript.
+    *   components/AVLTreeViz.jsx: Componente respons�vel por desenhar a �rvore.
+*   ackend/: C�digo fonte do Backend Python.
+    *   rvore_avl.py: Implementa��o da classe AVL em Python.
+    *   catalogo_produtos_avl.py: Gerenciador do cat�logo.
+*   docs/: Documenta��o complementar.
 
-# Entre no diretório
-cd Ecomerce-AEDII
+##  Sobre a �rvore AVL
 
-# Instale as dependências
-npm install --legacy-peer-deps
+A �rvore AVL � uma �rvore bin�ria de busca auto-balanceada. Ela garante que a altura da �rvore seja sempre logar�tmica em rela��o ao n�mero de n�s, garantindo opera��es de busca, inser��o e remo��o em tempo **O(log n)**.
 
-# Inicie o servidor de desenvolvimento
-npm run dev
-```
+Neste projeto, a �rvore � organizada pelo **Pre�o** do produto.
+*   **Pre�os menores**: V�o para a esquerda.
+*   **Pre�os maiores**: V�o para a direita.
+*   **Pre�os iguais**:
+    *   Se o nome for igual: Atualiza o produto existente.
+    *   Se o nome for diferente: Insere � direita (tratamento de colis�o).
 
-Acesse: `http://localhost:5173`
-
-### Backend (Python + FastAPI) - Opcional
-
-O sistema funciona offline por padrão. Para usar a árvore AVL real do backend:
-
-```bash
-# Instale as dependências Python
-cd backend
-pip install -r requirements.txt
-
-# Inicie o servidor FastAPI
-uvicorn app:app --reload
-
-# OU use o script PowerShell
-.\start-backend.ps1
-```
-
-Backend disponível em: `http://localhost:8000`  
-Documentação da API: `http://localhost:8000/docs`
-
-**Configurar modo online:**
-Edite o arquivo `.env` e mude:
-```env
-VITE_MODE=online
-```
-
----
-
-## 🎯 Funcionalidades
-
-### 🏠 Home
-Página inicial com cards de navegação para todas as funcionalidades.
-
-### 📦 Produtos
-- Cadastrar, editar e excluir produtos
-- Busca por nome ou categoria
-- Importação em lote de 47 produtos de exemplo
-- Validação em português
-
-### 🌲 Árvore AVL
-- Visualização gráfica da estrutura AVL
-- Renderização dinâmica com Mermaid.js
-- Atualização em tempo real
-
-### 📊 Estatísticas
-- Análise de complexidade (Big O)
-- Altura da árvore e rotações estimadas
-- Tabelas de desempenho
-- Conteúdo educacional sobre AVL
-
----
-
-## 🧪 Testes
-
-### Executar Todos os Testes
-```bash
-npm test
-```
-
-### Interface Visual de Testes
-```bash
-npm run test:ui
-```
-
-### Cobertura de Código
-```bash
-npm run test:coverage
-```
-
-### Testes de Desempenho
-```bash
-npm run test:performance
-```
-
-### Testes Manuais E2E
-```bash
-npm run dev  # Em um terminal
-node tests/e2e-manual.js  # Em outro terminal
-```
-
----
-
-## 📚 Documentação
-
-- **[Histórico de Alterações](docs/AlteracoesProjeto.md)** - Todas as mudanças realizadas no projeto
-- **[Documentação das Telas](docs/DocumentacaoTelas.md)** - Funcionalidades de cada página
-- **[Estratégias de Teste](docs/TestesEstrategiasUso.md)** - Testes e cenários de uso
-- **[Guia de Execução de Testes](docs/GuiaExecucaoTestes.md)** - Como rodar os testes
-
----
-
-## 🔧 Configuração
-
-### Modo Offline (Padrão)
-Crie um arquivo `.env` na raiz:
-```env
-VITE_MODE=offline
-VITE_API_URL=http://localhost:8000
-```
-
-### Modo Online (Backend)
-Altere o `.env`:
-```env
-VITE_MODE=online
-VITE_API_URL=http://localhost:8000
-```
-
----
-
-## 📂 Estrutura do Projeto
-
-```
-src/
-├── components/       # Componentes React
-├── hooks/           # Custom hooks (Zustand store)
-├── pages/           # Páginas do sistema
-├── services/        # API services
-├── store/           # Gerenciamento de estado
-├── types/           # TypeScript types
-└── utils/           # Utilitários e dados de exemplo
-
-tests/
-├── functional.test.ts    # Testes funcionais
-├── integration.test.ts   # Testes de integração
-├── performance.test.ts   # Testes de desempenho
-└── e2e-manual.js        # Checklist de testes manuais
-
-docs/
-├── AlteracoesProjeto.md       # Histórico de mudanças
-├── DocumentacaoTelas.md       # Documentação das páginas
-├── TestesEstrategiasUso.md    # Estratégias de teste
-└── GuiaExecucaoTestes.md      # Guia de testes
-```
-
----
-
-## 🎓 Conceitos Acadêmicos Abordados
-
-- **Árvore AVL** - Estrutura de dados auto-balanceada
-- **Rotações** - Simples e duplas (LL, RR, LR, RL)
-- **Complexidade** - Análise Big O (busca, inserção, remoção)
-- **Altura da Árvore** - Cálculo e otimização
-- **Balanceamento** - Fator de balanceamento e propriedades
-
----
-
-## 👥 Autores
-
-Desenvolvido por estudantes do 4º período de Engenharia de Software - UFAM
-
----
-
-## 📄 Licença
-
-Este projeto é de uso acadêmico.
-
----
-
-**Última atualização:** 01/11/2025
+Para mais detalhes te�ricos, consulte [docs/AVL_EXPLICACAO.md](docs/AVL_EXPLICACAO.md).

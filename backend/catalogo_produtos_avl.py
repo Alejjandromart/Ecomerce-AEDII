@@ -23,7 +23,8 @@ class CatalogoProdutosAVL:
         Args:
             produto (Produto): Produto a ser adicionado com código único
         """
-        self.avl.inserir_chave(produto.codigo, produto)
+        # Inserindo pelo PREÇO conforme solicitado
+        self.avl.inserir_chave(produto.preco, produto)
         print(f"Produto adicionado: {produto}")
 
     def remover_produto(self, codigo: int):
@@ -33,13 +34,18 @@ class CatalogoProdutosAVL:
         Args:
             codigo (int): Código do produto a ser removido
         """
-        self.avl.remover_chave(codigo)
-        print(f"Produto removido: código {codigo}")
+        # Busca o produto para saber o preço (chave)
+        produto = self.buscar_produto(codigo)
+        if produto:
+            self.avl.remover_chave(produto.preco)
+            print(f"Produto removido: código {codigo}")
+        else:
+            print(f"Erro ao remover: Produto {codigo} não encontrado")
 
     def buscar_produto(self, codigo: int):
         """
         Busca um produto pelo código
-        Complexidade: O(log n)
+        Complexidade: O(n) pois a árvore está ordenada por preço
         
         Args:
             codigo (int): Código do produto a buscar
@@ -47,13 +53,19 @@ class CatalogoProdutosAVL:
         Returns:
             Produto | None: Produto encontrado ou None se não existir
         """
-        no = self.avl.buscar(self.avl.raiz, codigo)
-        if no:
-            print(f"Produto encontrado: {no.valor}")
-            return no.valor
-        else:
-            print(f"Produto com código {codigo} não encontrado.")
-            return None
+        # Busca linear recursiva pois a chave agora é o preço
+        def buscar_recursivo(no):
+            if not no:
+                return None
+            if no.valor and no.valor.codigo == codigo:
+                return no.valor
+            
+            res_esq = buscar_recursivo(no.esquerda)
+            if res_esq: return res_esq
+            
+            return buscar_recursivo(no.direita)
+
+        return buscar_recursivo(self.avl.raiz)
 
     def listar_produtos(self):
         """
