@@ -5,7 +5,7 @@ import { Card, CardContent } from './ui/Card';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 
-const ProductCatalog = ({ products, onRemove, onAddClick }) => {
+const ProductCatalog = ({ products, onRemove, onAddClick, onClearAll }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: 'price', direction: 'asc' });
 
@@ -18,7 +18,12 @@ const ProductCatalog = ({ products, onRemove, onAddClick }) => {
     };
 
     const sortedProducts = [...products]
-        .filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter(p => {
+            const term = searchTerm.toLowerCase();
+            const matchesName = p.name.toLowerCase().includes(term);
+            const matchesId = p.id.toString().includes(searchTerm);
+            return matchesName || matchesId;
+        })
         .sort((a, b) => {
             if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
             if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -32,9 +37,24 @@ const ProductCatalog = ({ products, onRemove, onAddClick }) => {
                     <h1 className="text-3xl font-bold font-heading text-foreground">Catálogo de Produtos</h1>
                     <p className="text-muted-foreground mt-1">Gerencie seu inventário e visualize preços.</p>
                 </div>
-                <Button onClick={onAddClick} className="gap-2 shadow-lg shadow-primary/25">
-                    <Plus size={18} /> Novo Produto
-                </Button>
+                <div className="flex gap-2">
+                    {products.length > 0 && (
+                        <Button 
+                            onClick={() => {
+                                if (window.confirm('Tem certeza que deseja remover todos os produtos?')) {
+                                    onClearAll();
+                                }
+                            }} 
+                            variant="outline" 
+                            className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                            <Trash2 size={18} /> Limpar Tudo
+                        </Button>
+                    )}
+                    <Button onClick={onAddClick} className="gap-2 shadow-lg shadow-primary/25">
+                        <Plus size={18} /> Novo Produto
+                    </Button>
+                </div>
             </div>
 
             <Card className="border-none shadow-lg bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl">
@@ -44,7 +64,7 @@ const ProductCatalog = ({ products, onRemove, onAddClick }) => {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
                             <Input
                                 type="text"
-                                placeholder="Buscar produto..."
+                                placeholder="Buscar por nome ou ID..."
                                 className="pl-10 bg-background/50 border-transparent focus:border-primary/20 focus:bg-background transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}

@@ -16,6 +16,7 @@ export default function App() {
     addProduct,
     removeProduct,
     addBulkProducts,
+    clearAllProducts,
     getHeight,
     runStressTest,
     optimizeTree
@@ -36,6 +37,7 @@ export default function App() {
           products={products}
           onRemove={removeProduct}
           onAddClick={() => setIsModalOpen(true)}
+          onClearAll={clearAllProducts}
         />
       )}
 
