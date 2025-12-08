@@ -108,7 +108,22 @@ export const useAVLTree = (initialProducts = []) => {
     }, [products]);
 
     const addProduct = useCallback((product) => {
-        setProducts(prev => [...prev, { ...product, id: Date.now() + Math.random() }]);
+        setProducts(prev => {
+            // Verificar se já existe produto com mesmo preço e nome
+            const existingIndex = prev.findIndex(
+                p => p.price === product.price && p.name === product.name
+            );
+            
+            if (existingIndex !== -1) {
+                // Mesmo preço e nome: atualizar produto existente
+                const updated = [...prev];
+                updated[existingIndex] = { ...product, id: prev[existingIndex].id };
+                return updated;
+            }
+            
+            // Produto novo: adicionar ao array
+            return [...prev, { ...product, id: Date.now() + Math.random() }];
+        });
     }, []);
 
     const removeProduct = useCallback((id) => {
@@ -116,7 +131,26 @@ export const useAVLTree = (initialProducts = []) => {
     }, []);
 
     const addBulkProducts = useCallback((newProducts) => {
-        setProducts(prev => [...prev, ...newProducts]);
+        setProducts(prev => {
+            let updated = [...prev];
+            
+            newProducts.forEach(newProduct => {
+                // Verificar se já existe produto com mesmo preço e nome
+                const existingIndex = updated.findIndex(
+                    p => p.price === newProduct.price && p.name === newProduct.name
+                );
+                
+                if (existingIndex !== -1) {
+                    // Mesmo preço e nome: atualizar produto existente
+                    updated[existingIndex] = { ...newProduct, id: updated[existingIndex].id };
+                } else {
+                    // Produto novo: adicionar ao array
+                    updated.push({ ...newProduct, id: newProduct.id || Date.now() + Math.random() });
+                }
+            });
+            
+            return updated;
+        });
     }, []);
 
     const runStressTest = useCallback((count = 1000) => {
@@ -185,6 +219,10 @@ export const useAVLTree = (initialProducts = []) => {
         };
     }, []);
 
+    const clearAllProducts = useCallback(() => {
+        setProducts([]);
+    }, []);
+
     const optimizeTree = useCallback(() => {
         if (!avlRoot) return;
 
@@ -219,6 +257,7 @@ export const useAVLTree = (initialProducts = []) => {
         addProduct,
         removeProduct,
         addBulkProducts,
+        clearAllProducts,
         getHeight,
         getBalance,
         runStressTest,
