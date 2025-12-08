@@ -57,17 +57,17 @@ O objetivo principal é demonstrar a aplicação prática, eficiência e o funci
 A aplicação React contém toda a lógica da AVL implementada em JavaScript para visualização imediata.
 
 1. Clone o repositório e entre na pasta:
-   `ash
+   ```bash
    cd Ecomerce-AEDII
-   ``r
+   ```
 2. Instale as dependências:
-   `ash
+   ```bash
    npm install
-   ``r
+   ```
 3. Inicie o servidor de desenvolvimento:
-   `ash
+   ```bash
    npm run dev
-   ``r
+   ```
 4. Acesse **http://localhost:5173** no seu navegador.
 
 ### Rodando o Backend (Opcional)
@@ -75,24 +75,23 @@ A aplicação React contém toda a lógica da AVL implementada em JavaScript par
 O backend serve como uma implementação de referência da estrutura de dados em Python.
 
 1. Entre na pasta do backend:
-   `ash
+   ```bash
    cd backend
-   ``r
+   ```
 2. Instale as dependências:
-   `ash
+   ```bash
    pip install -r requirements.txt
-   ``r
+   ```
 3. Execute o servidor:
-   `ash
+   ```bash
    uvicorn app:app --reload
-   ``r
+   ```
 
 ## Estrutura do Projeto
 
 * src/hooks/useAVLTree.js: O "coração" da aplicação. Contém a implementação da Árvore AVL em JavaScript (Inserção, Rotações, Balanceamento).
 * src/components/: Componentes da interface (Catálogo, Modal, Visualização da Árvore).
-* ackend/: Implementação equivalente em Python (arquivos rvore_avl.py,
-  o.py).
+* backend/: Implementação equivalente em Python (arquivos `arvore_avl.py`, `no.py`).
 
 ## Autores
 
