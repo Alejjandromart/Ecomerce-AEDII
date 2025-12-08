@@ -1,70 +1,99 @@
-# E-commerce AED II - Cat·logo de Produtos com ¡rvore AVL
+Ôªø# E-commerce AED II - Cat√°logo de Produtos com √Årvore AVL
 
-Este projeto È uma aplicaÁ„o de cat·logo de produtos desenvolvida para a disciplina de **Algoritmos e Estrutura de Dados II**. O objetivo principal È demonstrar a eficiÍncia e o funcionamento de uma **¡rvore AVL (Adelson-Velsky and Landis)** na pr·tica, comparando-a com estruturas lineares (listas).
+Este projeto √© uma aplica√ß√£o web interativa desenvolvida para a disciplina de **Algoritmos e Estrutura de Dados II** da **UFAM (Universidade Federal do Amazonas)**.
 
-##  Funcionalidades
+O objetivo principal √© demonstrar a aplica√ß√£o pr√°tica, efici√™ncia e o funcionamento interno de uma **√Årvore AVL (Adelson-Velsky and Landis)** no gerenciamento de um cat√°logo de produtos de e-commerce, oferecendo uma compara√ß√£o direta de desempenho com estruturas lineares tradicionais.
 
-*   **VisualizaÁ„o Interativa da AVL**: Veja a ·rvore sendo construÌda e balanceada em tempo real no navegador.
-*   **Gerenciamento de Produtos**: Adicione, remova e busque produtos.
-*   **Painel de Performance**: Compare o tempo de inserÁ„o e busca entre a ¡rvore AVL e uma Lista tradicional.
-*   **ImplementaÁ„o HÌbrida**:
-    *   **Frontend (Ativo)**: React + Vite. Toda a lÛgica da AVL roda no cliente para visualizaÁ„o instant‚nea.
-    *   **Backend (ReferÍncia)**: Python + FastAPI. ImplementaÁ„o cl·ssica da AVL disponÌvel na pasta ackend/ para estudo.
+## Funcionalidades
 
-##  Tecnologias
+### 1. Cat√°logo de Produtos
 
-*   **Frontend**: React, Vite, TailwindCSS, Framer Motion (animaÁıes), Recharts (gr·ficos).
-*   **Backend**: Python 3.x, FastAPI (cÛdigo de referÍncia).
+* **Gerenciamento Completo**: Adicione, edite e remova produtos.
+* **Busca Flex√≠vel**: Pesquise produtos tanto pelo **Nome** quanto pelo **ID** (c√≥digo √∫nico de 7 d√≠gitos).
+* **Ordena√ß√£o**: Classifique a lista por Pre√ßo ou Estoque.
+* **Edi√ß√£o Detalhada**: Clique em qualquer produto para editar suas informa√ß√µes (Pre√ßo, Estoque, Nome, Imagem).
+* **IDs √önicos**: O sistema gera automaticamente IDs √∫nicos de 7 d√≠gitos (ex: `1000001`) para cada produto.
 
-##  Como Executar
+### 2. Visualiza√ß√£o da √Årvore AVL
 
-### Frontend (AplicaÁ„o Principal)
+* **Interatividade em Tempo Real**: Observe a √°rvore sendo constru√≠da, n√≥s sendo inseridos e as rota√ß√µes de balanceamento (Simples/Dupla, Esquerda/Direita) acontecendo visualmente.
+* **Estrutura de Dados**: A √°rvore √© organizada internamente pelo **Pre√ßo** dos produtos, garantindo buscas e inser√ß√µes eficientes O(log n).
 
-1.  Instale as dependÍncias:
-    `ash
-    npm install
-    ``n
-2.  Inicie o servidor de desenvolvimento:
-    `ash
-    npm run dev
-    ``n
-3.  Acesse http://localhost:5173 no seu navegador.
+### 3. Painel de Performance (Benchmark)
 
-### Backend (Opcional - Para Estudo)
+* **Comparativo AVL vs Lista**: Execute testes de estresse com milhares de produtos.
+* **M√©tricas**: Compare o tempo de Gera√ß√£o, Inser√ß√£o e Busca entre a estrutura AVL e uma Lista linear (Array).
+* **Gr√°ficos**: Visualiza√ß√£o clara da diferen√ßa de desempenho.
 
-O backend em Python serve como uma implementaÁ„o de referÍncia da estrutura de dados.
+### 4. Opera√ß√µes em Lote
 
-1.  Entre na pasta do backend:
-    `ash
-    cd backend
-    ``n
-2.  Instale as dependÍncias (recomendado usar venv):
-    `ash
-    pip install -r requirements.txt
-    ``n
-3.  Execute o servidor:
-    `ash
-    uvicorn app:app --reload
-    ``n
-##  Estrutura do Projeto
+* **Importa√ß√£o em Massa**: Adicione m√∫ltiplos produtos de uma vez atrav√©s de uma interface de entrada de texto (CSV).
 
-*   src/: CÛdigo fonte do Frontend React.
-    *   hooks/useAVLTree.js: **CoraÁ„o do projeto**. ContÈm a implementaÁ„o da ¡rvore AVL em JavaScript.
-    *   components/AVLTreeViz.jsx: Componente respons·vel por desenhar a ·rvore.
-*   ackend/: CÛdigo fonte do Backend Python.
-    *   rvore_avl.py: ImplementaÁ„o da classe AVL em Python.
-    *   catalogo_produtos_avl.py: Gerenciador do cat·logo.
-*   docs/: DocumentaÁ„o complementar.
+## Tecnologias Utilizadas
 
-##  Sobre a ¡rvore AVL
+### Frontend (Aplica√ß√£o Principal)
 
-A ¡rvore AVL È uma ·rvore bin·ria de busca auto-balanceada. Ela garante que a altura da ·rvore seja sempre logarÌtmica em relaÁ„o ao n˙mero de nÛs, garantindo operaÁıes de busca, inserÁ„o e remoÁ„o em tempo **O(log n)**.
+* **React.js**: Biblioteca para constru√ß√£o da interface.
+* **Vite**: Build tool r√°pida e moderna.
+* **Tailwind CSS**: Framework de estiliza√ß√£o utilit√°rio.
+* **Framer Motion**: Para anima√ß√µes fluidas de transi√ß√£o e visualiza√ß√£o da √°rvore.
+* **Lucide React**: √çcones modernos.
 
-Neste projeto, a ·rvore È organizada pelo **PreÁo** do produto.
-*   **PreÁos menores**: V„o para a esquerda.
-*   **PreÁos maiores**: V„o para a direita.
-*   **PreÁos iguais**:
-    *   Se o nome for igual: Atualiza o produto existente.
-    *   Se o nome for diferente: Insere ‡ direita (tratamento de colis„o).
+### Backend (Refer√™ncia/API)
 
-Para mais detalhes teÛricos, consulte [docs/AVL_EXPLICACAO.md](docs/AVL_EXPLICACAO.md).
+* **Python 3**: Linguagem base.
+* **FastAPI**: Framework para cria√ß√£o da API REST.
+* **Estrutura AVL**: Implementa√ß√£o pura da √°rvore AVL em Python para fins acad√™micos e valida√ß√£o.
+
+## Como Executar
+
+### Pr√©-requisitos
+
+* Node.js (v16 ou superior)
+* Python 3.8+ (Opcional, para o backend)
+
+### Rodando o Frontend (Recomendado)
+
+A aplica√ß√£o React cont√©m toda a l√≥gica da AVL implementada em JavaScript para visualiza√ß√£o imediata.
+
+1. Clone o reposit√≥rio e entre na pasta:
+   `ash
+   cd Ecomerce-AEDII
+   ``r
+2. Instale as depend√™ncias:
+   `ash
+   npm install
+   ``r
+3. Inicie o servidor de desenvolvimento:
+   `ash
+   npm run dev
+   ``r
+4. Acesse **http://localhost:5173** no seu navegador.
+
+### Rodando o Backend (Opcional)
+
+O backend serve como uma implementa√ß√£o de refer√™ncia da estrutura de dados em Python.
+
+1. Entre na pasta do backend:
+   `ash
+   cd backend
+   ``r
+2. Instale as depend√™ncias:
+   `ash
+   pip install -r requirements.txt
+   ``r
+3. Execute o servidor:
+   `ash
+   uvicorn app:app --reload
+   ``r
+
+## Estrutura do Projeto
+
+* src/hooks/useAVLTree.js: O "cora√ß√£o" da aplica√ß√£o. Cont√©m a implementa√ß√£o da √Årvore AVL em JavaScript (Inser√ß√£o, Rota√ß√µes, Balanceamento).
+* src/components/: Componentes da interface (Cat√°logo, Modal, Visualiza√ß√£o da √Årvore).
+* ackend/: Implementa√ß√£o equivalente em Python (arquivos rvore_avl.py,
+  o.py).
+
+## Autores
+
+Projeto desenvolvido por **Alejjandro, Dieglison, Joel, Lanna, Peterson** para a disciplina de Algoritmos e Estrutura de Dados II.
