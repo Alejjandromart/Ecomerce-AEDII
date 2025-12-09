@@ -1,209 +1,98 @@
-# 🛒 Ecomerce-AEDII
+﻿# E-commerce AED II - Catálogo de Produtos com Árvore AVL
 
-Sistema de gerenciamento de produtos com visualização de estrutura de dados AVL, desenvolvido para a disciplina de **Algoritmos e Estrutura de Dados II** da UFAM.
+Este projeto é uma aplicação web interativa desenvolvida para a disciplina de **Algoritmos e Estrutura de Dados II** da **UFAM (Universidade Federal do Amazonas)**.
 
----
+O objetivo principal é demonstrar a aplicação prática, eficiência e o funcionamento interno de uma **Árvore AVL (Adelson-Velsky and Landis)** no gerenciamento de um catálogo de produtos de e-commerce, oferecendo uma comparação direta de desempenho com estruturas lineares tradicionais.
 
-## 📋 Sobre o Projeto
+## Funcionalidades
 
-Sistema web interativo que combina um e-commerce com conceitos acadêmicos de estruturas de dados, especificamente **Árvore AVL**. O projeto permite:
+### 1. Catálogo de Produtos
 
-- 📦 Gerenciamento completo de produtos (CRUD)
-- 🌲 Visualização gráfica da árvore AVL
-- 📊 Análise de complexidade e estatísticas
-- 💾 Persistência offline com localStorage
-- 🔄 Modo híbrido (online/offline)
+* **Gerenciamento Completo**: Adicione, edite e remova produtos.
+* **Busca Flexível**: Pesquise produtos tanto pelo **Nome** quanto pelo **ID** (código único de 7 dígitos).
+* **Ordenação**: Classifique a lista por Preço ou Estoque.
+* **Edição Detalhada**: Clique em qualquer produto para editar suas informações (Preço, Estoque, Nome, Imagem).
+* **IDs Únicos**: O sistema gera automaticamente IDs únicos de 7 dígitos (ex: `1000001`) para cada produto.
 
----
+### 2. Visualização da Árvore AVL
 
-## 🚀 Tecnologias
+* **Interatividade em Tempo Real**: Observe a árvore sendo construída, nós sendo inseridos e as rotações de balanceamento (Simples/Dupla, Esquerda/Direita) acontecendo visualmente.
+* **Estrutura de Dados**: A árvore é organizada internamente pelo **Preço** dos produtos, garantindo buscas e inserções eficientes O(log n).
 
-- **React 19.1.1** - Biblioteca UI
-- **TypeScript** - Tipagem estática
-- **Vite 7.1.7** - Build tool
-- **Tailwind CSS 4.1.16** - Estilização
-- **Zustand** - Gerenciamento de estado
-- **React Hook Form + Zod** - Formulários e validação
-- **Mermaid.js** - Visualização de diagramas
-- **Vitest** - Testes automatizados
+### 3. Painel de Performance (Benchmark)
 
----
+* **Comparativo AVL vs Lista**: Execute testes de estresse com milhares de produtos.
+* **Métricas**: Compare o tempo de Geração, Inserção e Busca entre a estrutura AVL e uma Lista linear (Array).
+* **Gráficos**: Visualização clara da diferença de desempenho.
 
-## 📦 Instalação
+### 4. Operações em Lote
 
-### Frontend (React + Vite)
+* **Importação em Massa**: Adicione múltiplos produtos de uma vez através de uma interface de entrada de texto (CSV).
 
-```bash
-# Clone o repositório
-git clone https://github.com/Alejjandromart/Ecomerce-AEDII.git
+## Tecnologias Utilizadas
 
-# Entre no diretório
-cd Ecomerce-AEDII
+### Frontend (Aplicação Principal)
 
-# Instale as dependências
-npm install --legacy-peer-deps
+* **React.js**: Biblioteca para construção da interface.
+* **Vite**: Build tool rápida e moderna.
+* **Tailwind CSS**: Framework de estilização utilitário.
+* **Framer Motion**: Para animações fluidas de transição e visualização da árvore.
+* **Lucide React**: Ícones modernos.
 
-# Inicie o servidor de desenvolvimento
-npm run dev
-```
+### Backend (Referência/API)
 
-Acesse: `http://localhost:5173`
+* **Python 3**: Linguagem base.
+* **FastAPI**: Framework para criação da API REST.
+* **Estrutura AVL**: Implementação pura da árvore AVL em Python para fins acadêmicos e validação.
 
-### Backend (Python + FastAPI) - Opcional
+## Como Executar
 
-O sistema funciona offline por padrão. Para usar a árvore AVL real do backend:
+### Pré-requisitos
 
-```bash
-# Instale as dependências Python
-cd backend
-pip install -r requirements.txt
+* Node.js (v16 ou superior)
+* Python 3.8+ (Opcional, para o backend)
 
-# Inicie o servidor FastAPI
-uvicorn app:app --reload
+### Rodando o Frontend (Recomendado)
 
-# OU use o script PowerShell
-.\start-backend.ps1
-```
+A aplicação React contém toda a lógica da AVL implementada em JavaScript para visualização imediata.
 
-Backend disponível em: `http://localhost:8000`  
-Documentação da API: `http://localhost:8000/docs`
+1. Clone o repositório e entre na pasta:
+   ```bash
+   cd Ecomerce-AEDII
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+4. Acesse **http://localhost:5173** no seu navegador.
 
-**Configurar modo online:**
-Edite o arquivo `.env` e mude:
-```env
-VITE_MODE=online
-```
+### Rodando o Backend (Opcional)
 
----
+O backend serve como uma implementação de referência da estrutura de dados em Python.
 
-## 🎯 Funcionalidades
+1. Entre na pasta do backend:
+   ```bash
+   cd backend
+   ```
+2. Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Execute o servidor:
+   ```bash
+   uvicorn app:app --reload
+   ```
 
-### 🏠 Home
-Página inicial com cards de navegação para todas as funcionalidades.
+## Estrutura do Projeto
 
-### 📦 Produtos
-- Cadastrar, editar e excluir produtos
-- Busca por nome ou categoria
-- Importação em lote de 47 produtos de exemplo
-- Validação em português
+* src/hooks/useAVLTree.js: O "coração" da aplicação. Contém a implementação da Árvore AVL em JavaScript (Inserção, Rotações, Balanceamento).
+* src/components/: Componentes da interface (Catálogo, Modal, Visualização da Árvore).
+* backend/: Implementação equivalente em Python (arquivos `arvore_avl.py`, `no.py`).
 
-### 🌲 Árvore AVL
-- Visualização gráfica da estrutura AVL
-- Renderização dinâmica com Mermaid.js
-- Atualização em tempo real
+## Autores
 
-### 📊 Estatísticas
-- Análise de complexidade (Big O)
-- Altura da árvore e rotações estimadas
-- Tabelas de desempenho
-- Conteúdo educacional sobre AVL
-
----
-
-## 🧪 Testes
-
-### Executar Todos os Testes
-```bash
-npm test
-```
-
-### Interface Visual de Testes
-```bash
-npm run test:ui
-```
-
-### Cobertura de Código
-```bash
-npm run test:coverage
-```
-
-### Testes de Desempenho
-```bash
-npm run test:performance
-```
-
-### Testes Manuais E2E
-```bash
-npm run dev  # Em um terminal
-node tests/e2e-manual.js  # Em outro terminal
-```
-
----
-
-## 📚 Documentação
-
-- **[Histórico de Alterações](docs/AlteracoesProjeto.md)** - Todas as mudanças realizadas no projeto
-- **[Documentação das Telas](docs/DocumentacaoTelas.md)** - Funcionalidades de cada página
-- **[Estratégias de Teste](docs/TestesEstrategiasUso.md)** - Testes e cenários de uso
-- **[Guia de Execução de Testes](docs/GuiaExecucaoTestes.md)** - Como rodar os testes
-
----
-
-## 🔧 Configuração
-
-### Modo Offline (Padrão)
-Crie um arquivo `.env` na raiz:
-```env
-VITE_MODE=offline
-VITE_API_URL=http://localhost:8000
-```
-
-### Modo Online (Backend)
-Altere o `.env`:
-```env
-VITE_MODE=online
-VITE_API_URL=http://localhost:8000
-```
-
----
-
-## 📂 Estrutura do Projeto
-
-```
-src/
-├── components/       # Componentes React
-├── hooks/           # Custom hooks (Zustand store)
-├── pages/           # Páginas do sistema
-├── services/        # API services
-├── store/           # Gerenciamento de estado
-├── types/           # TypeScript types
-└── utils/           # Utilitários e dados de exemplo
-
-tests/
-├── functional.test.ts    # Testes funcionais
-├── integration.test.ts   # Testes de integração
-├── performance.test.ts   # Testes de desempenho
-└── e2e-manual.js        # Checklist de testes manuais
-
-docs/
-├── AlteracoesProjeto.md       # Histórico de mudanças
-├── DocumentacaoTelas.md       # Documentação das páginas
-├── TestesEstrategiasUso.md    # Estratégias de teste
-└── GuiaExecucaoTestes.md      # Guia de testes
-```
-
----
-
-## 🎓 Conceitos Acadêmicos Abordados
-
-- **Árvore AVL** - Estrutura de dados auto-balanceada
-- **Rotações** - Simples e duplas (LL, RR, LR, RL)
-- **Complexidade** - Análise Big O (busca, inserção, remoção)
-- **Altura da Árvore** - Cálculo e otimização
-- **Balanceamento** - Fator de balanceamento e propriedades
-
----
-
-## 👥 Autores
-
-Desenvolvido por estudantes do 4º período de Engenharia de Software - UFAM
-
----
-
-## 📄 Licença
-
-Este projeto é de uso acadêmico.
-
----
-
-**Última atualização:** 01/11/2025
+Projeto desenvolvido por **Alejjandro, Dieglison, Joel, Lanna, Peterson** para a disciplina de Algoritmos e Estrutura de Dados II.

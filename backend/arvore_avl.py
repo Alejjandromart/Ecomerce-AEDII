@@ -279,28 +279,35 @@ class ArvoreAVL:
         arestas = []
         estilos = []
 
+        def get_id(n):
+            # Usa o código do produto como ID do nó se disponível, senão usa a chave formatada
+            if n.valor and hasattr(n.valor, 'codigo'):
+                return f"Node{n.valor.codigo}"
+            return f"Node{str(n.chave).replace('.', '_')}"
+
         def percorrer(n):
             if n:
+                node_id = get_id(n)
+                
                 # Formata o label do nó com informações do produto
                 if n.valor:
                     # Limita o nome a 20 caracteres
                     nome = n.valor.nome[:20] + "..." if len(n.valor.nome) > 20 else n.valor.nome
                     preco = f"R$ {n.valor.preco:.2f}"
-                    # Reduz o ID para os últimos 7 dígitos
-                    id_curto = str(n.chave)[-7:]
-                    label = f"ID: {id_curto}<br/>{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
-                    nos.append(f'    Node{n.chave}["{label}"]')
+                    # Mostra o ID e o Preço (que é a chave agora)
+                    label = f"ID: {n.valor.codigo}<br/>{nome}<br/>{preco}<br/>Qtd: {n.valor.quantidade}"
+                    nos.append(f'    {node_id}["{label}"]')
                 else:
-                    nos.append(f'    Node{n.chave}["{n.chave}"]')
+                    nos.append(f'    {node_id}["{n.chave}"]')
                 
                 # Adiciona estilo para o nó
-                estilos.append(f"    style Node{n.chave} fill:#60a5fa,stroke:#2563eb,stroke-width:2px,color:#fff")
+                estilos.append(f"    style {node_id} fill:#60a5fa,stroke:#2563eb,stroke-width:2px,color:#fff")
                 
                 if n.esquerda:
-                    arestas.append(f"    Node{n.chave} --> Node{n.esquerda.chave}")
+                    arestas.append(f"    {node_id} --> {get_id(n.esquerda)}")
                     percorrer(n.esquerda)
                 if n.direita:
-                    arestas.append(f"    Node{n.chave} --> Node{n.direita.chave}")
+                    arestas.append(f"    {node_id} --> {get_id(n.direita)}")
                     percorrer(n.direita)
 
         percorrer(no)
